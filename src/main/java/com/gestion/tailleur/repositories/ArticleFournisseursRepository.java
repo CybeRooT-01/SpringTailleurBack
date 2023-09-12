@@ -1,7 +1,7 @@
 package com.gestion.tailleur.repositories;
 
-import com.gestion.tailleur.entities.ArticleConf;
-import com.gestion.tailleur.entities.ArticleFournisseur;
+import com.gestion.tailleur.Models.ArticleConf;
+import com.gestion.tailleur.Models.ArticleFournisseur;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

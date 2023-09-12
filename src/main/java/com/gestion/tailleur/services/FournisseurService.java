@@ -1,10 +1,8 @@
 package com.gestion.tailleur.services;
 
-import com.gestion.tailleur.entities.ArticleConf;
-import com.gestion.tailleur.entities.Fournisseur;
+import com.gestion.tailleur.Models.Fournisseur;
 import com.gestion.tailleur.repositories.FournisseurRepository;
 import com.github.javafaker.Faker;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

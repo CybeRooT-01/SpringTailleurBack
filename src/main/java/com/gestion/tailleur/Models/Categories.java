@@ -1,4 +1,4 @@
-package com.gestion.tailleur.entities;
+package com.gestion.tailleur.Models;
 
 import com.gestion.tailleur.enums.TypeCategories;
 import jakarta.persistence.*;

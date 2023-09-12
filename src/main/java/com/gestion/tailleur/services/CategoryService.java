@@ -1,6 +1,6 @@
 package com.gestion.tailleur.services;
 
-import com.gestion.tailleur.entities.Categories;
+import com.gestion.tailleur.Models.Categories;
 import com.gestion.tailleur.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

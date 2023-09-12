@@ -1,6 +1,6 @@
 package com.gestion.tailleur.controllers;
 
-import com.gestion.tailleur.entities.Categories;
+import com.gestion.tailleur.Models.Categories;
 import com.gestion.tailleur.response.CategorieResponseMessage;
 import com.gestion.tailleur.services.CategoryService;
 import lombok.AllArgsConstructor;
@@ -9,13 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/categorie")
 public class CategoryController {
     private final CategoryService categoryService;
-
     @GetMapping()
     public ResponseEntity<List<Categories>> listerCategories() {
         List<Categories> categories = this.categoryService.getAll();

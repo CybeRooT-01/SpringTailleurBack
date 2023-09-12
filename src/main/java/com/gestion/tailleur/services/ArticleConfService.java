@@ -1,15 +1,14 @@
 package com.gestion.tailleur.services;
 
-import com.gestion.tailleur.entities.ArticleConf;
-import com.gestion.tailleur.entities.ArticleFournisseur;
-import com.gestion.tailleur.entities.Categories;
-import com.gestion.tailleur.entities.Fournisseur;
+import com.gestion.tailleur.Models.ArticleConf;
+import com.gestion.tailleur.Models.ArticleFournisseur;
+import com.gestion.tailleur.Models.Categories;
+import com.gestion.tailleur.Models.Fournisseur;
 import com.gestion.tailleur.repositories.ArticleConfRepository;
 import com.gestion.tailleur.repositories.ArticleFournisseursRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

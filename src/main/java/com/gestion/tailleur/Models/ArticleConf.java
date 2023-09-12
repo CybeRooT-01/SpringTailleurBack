@@ -1,4 +1,4 @@
-package com.gestion.tailleur.entities;
+package com.gestion.tailleur.Models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;

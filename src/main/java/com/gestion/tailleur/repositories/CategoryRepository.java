@@ -1,7 +1,6 @@
 package com.gestion.tailleur.repositories;
 
-import com.gestion.tailleur.entities.Categories;
-import lombok.AllArgsConstructor;
+import com.gestion.tailleur.Models.Categories;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.gestion.tailleur.controllers;
 
-import com.gestion.tailleur.entities.ArticleConf;
+import com.gestion.tailleur.Models.ArticleConf;
 import com.gestion.tailleur.response.ArticleConfResponse;
 import com.gestion.tailleur.services.ArticleConfService;
 import lombok.AllArgsConstructor;
@@ -47,7 +47,7 @@ public class ArticleConfController {
         return ResponseEntity.status(status).body(response);
     }
     @DeleteMapping("/{id}")
-public ResponseEntity<ArticleConfResponse> deleteArticleVente(@PathVariable int id) {
+    public ResponseEntity<ArticleConfResponse> deleteArticleVente(@PathVariable int id) {
         ArticleConf articleAmodifier = this.articleConfService.getOneById(id);
         if (articleAmodifier == null) {
             String message = "L'article n'existe pas.";

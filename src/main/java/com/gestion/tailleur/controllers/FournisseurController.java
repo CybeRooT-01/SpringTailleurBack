@@ -1,10 +1,9 @@
 package com.gestion.tailleur.controllers;
 
-import com.gestion.tailleur.entities.Fournisseur;
+import com.gestion.tailleur.Models.Fournisseur;
 import com.gestion.tailleur.services.FournisseurService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
