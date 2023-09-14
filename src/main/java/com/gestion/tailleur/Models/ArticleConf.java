@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLInsert;
+import org.hibernate.annotations.Where;
 
 import java.util.Set;
 
@@ -11,6 +14,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "article_conf")
+//@Where(clause = "")
+//@SQLInsert()
+@SQLDelete(sql = "update article_conf c c.")
 public class ArticleConf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +40,7 @@ public class ArticleConf {
     @JsonProperty("categories")
     private Categories categorie;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "article_fournisseur",
             joinColumns = @JoinColumn(name = "id_article"),

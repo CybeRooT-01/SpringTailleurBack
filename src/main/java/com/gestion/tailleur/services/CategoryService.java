@@ -30,8 +30,10 @@ public class CategoryService {
         return this.categoryRepository.findAll();
     }
 
-    public void delete(int id) {
-        this.categoryRepository.deleteById(id);
+    public void delete(List<Integer> id) {
+        for (Integer integer : id) {
+            this.categoryRepository.deleteById(integer);
+        }
     }
 
     public void update(int id, Categories categories) {

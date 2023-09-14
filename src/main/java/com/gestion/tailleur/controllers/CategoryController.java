@@ -33,21 +33,22 @@ public class CategoryController {
         CategorieResponseMessage<Categories> response = new CategorieResponseMessage<>(message, savedCategorie, status);
         return ResponseEntity.status(status).body(response);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<CategorieResponseMessage<String>> delete(@PathVariable int id){
-        Categories existingCategorie = this.categoryService.getOneById(id);
-        if (existingCategorie == null){
-            String message = "La catégorie n'existe pas.";
-            int status = HttpStatus.NOT_FOUND.value();
-            CategorieResponseMessage<String> response = new CategorieResponseMessage<>(message, null, status);
-            return ResponseEntity.status(status).body(response);
+    @DeleteMapping()
+    public ResponseEntity<CategorieResponseMessage<String>> delete(@RequestBody List<Integer> id){
+        for (Integer integer : id) {
+            Categories existingCategorie = this.categoryService.getOneById(integer);
+            if (existingCategorie == null){
+                String message = "La catégorie n'existe pas.";
+                int status = HttpStatus.NOT_FOUND.value();
+                CategorieResponseMessage<String> response = new CategorieResponseMessage<>(message, null, status);
+                return ResponseEntity.status(status).body(response);
+            }
         }
         this.categoryService.delete(id);
         int status = HttpStatus.OK.value();
         String message = "Categorie supprimer avec succes";
         CategorieResponseMessage<String> response = new CategorieResponseMessage<>(message, null, status);
         return ResponseEntity.status(status).body(response);
-
     }
     @PutMapping("/{id}")
     public  ResponseEntity<CategorieResponseMessage<Categories>> update(@PathVariable int id, @RequestBody Categories categories){
