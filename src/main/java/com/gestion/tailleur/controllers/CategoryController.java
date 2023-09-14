@@ -1,7 +1,8 @@
 package com.gestion.tailleur.controllers;
 
+
 import com.gestion.tailleur.Models.Categories;
-import com.gestion.tailleur.response.CategorieResponseMessage;
+import com.gestion.tailleur.dto.response.CategoryDTO;
 import com.gestion.tailleur.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,60 +10,50 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Stream;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/categorie")
 public class CategoryController {
     private final CategoryService categoryService;
     @GetMapping()
-    public ResponseEntity<List<Categories>> listerCategories() {
-        List<Categories> categories = this.categoryService.getAll();
-        return ResponseEntity.ok(categories);
+    public Stream<CategoryDTO> listerCategories() {
+        return this.categoryService.getAll();
     }
     @PostMapping()
-    public ResponseEntity<CategorieResponseMessage<Categories>> ajouterCategorie(@RequestBody Categories categorie) {
+    public ResponseEntity<Categories> ajouterCategorie(@RequestBody Categories categorie) {
         Categories savedCategorie = this.categoryService.creer(categorie);
         if (savedCategorie == null) {
-            String message = "La catégorie existe déjà.";
-            int status = HttpStatus.CONFLICT.value();
-            CategorieResponseMessage<Categories> response = new CategorieResponseMessage<>(message, null, status);
-            return ResponseEntity.status(status).body(response);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        String message = "La catégorie a été ajoutée avec succès.";
-        int status = HttpStatus.CREATED.value();
-        CategorieResponseMessage<Categories> response = new CategorieResponseMessage<>(message, savedCategorie, status);
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategorie);
     }
     @DeleteMapping()
-    public ResponseEntity<CategorieResponseMessage<String>> delete(@RequestBody List<Integer> id){
+    public String delete(@RequestBody List<Integer> id){
         for (Integer integer : id) {
             Categories existingCategorie = this.categoryService.getOneById(integer);
             if (existingCategorie == null){
                 String message = "La catégorie n'existe pas.";
                 int status = HttpStatus.NOT_FOUND.value();
-                CategorieResponseMessage<String> response = new CategorieResponseMessage<>(message, null, status);
-                return ResponseEntity.status(status).body(response);
             }
+            this.categoryService.delete(id);
         }
         this.categoryService.delete(id);
         int status = HttpStatus.OK.value();
-        String message = "Categorie supprimer avec succes";
-        CategorieResponseMessage<String> response = new CategorieResponseMessage<>(message, null, status);
-        return ResponseEntity.status(status).body(response);
+        return "Categorie supprimer avec succes";
     }
     @PutMapping("/{id}")
-    public  ResponseEntity<CategorieResponseMessage<Categories>> update(@PathVariable int id, @RequestBody Categories categories){
+    public  Categories update(@PathVariable int id, @RequestBody Categories categories){
         Categories existingCategorie = this.categoryService.getOneById(id);
         if (existingCategorie == null){
             String message = "La catégorie n'existe pas.";
             int status = HttpStatus.NOT_FOUND.value();
-            CategorieResponseMessage<Categories> response = new CategorieResponseMessage<>(message, null, status);
-            return ResponseEntity.status(status).body(response);
+            return null;
         }
         this.categoryService.update(id, categories);
         String message = "Categorie Modifier avec succes";
-        CategorieResponseMessage<Categories> response = new CategorieResponseMessage<>(message, categories, HttpStatus.OK.value());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return this.categoryService.getOneById(id);
     }
 
 }
