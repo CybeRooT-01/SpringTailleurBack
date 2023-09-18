@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -15,4 +17,6 @@ public class Fournisseur {
     private String nom;
     private String address;
 
+//    @ManyToMany(mappedBy = "fournisseurs")
+//    private Set<ArticleConf> articleConf;
 }

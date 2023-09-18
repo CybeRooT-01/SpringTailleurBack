@@ -2,7 +2,8 @@ package com.gestion.tailleur.controllers;
 
 
 import com.gestion.tailleur.Models.Categories;
-import com.gestion.tailleur.dto.response.CategoryDTO;
+import com.gestion.tailleur.dto.requests.CategoryDTOrequest;
+import com.gestion.tailleur.dto.response.CategoryDTOresponse;
 import com.gestion.tailleur.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,12 @@ import java.util.stream.Stream;
 public class CategoryController {
     private final CategoryService categoryService;
     @GetMapping()
-    public Stream<CategoryDTO> listerCategories() {
+    public Stream<CategoryDTOresponse> listerCategories() {
         return this.categoryService.getAll();
     }
     @PostMapping()
-    public ResponseEntity<Categories> ajouterCategorie(@RequestBody Categories categorie) {
-        Categories savedCategorie = this.categoryService.creer(categorie);
-        if (savedCategorie == null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategorie);
+    public CategoryDTOresponse ajouterCategorie(@RequestBody CategoryDTOrequest categorie) {
+        return this.categoryService.creer(categorie);
     }
     @DeleteMapping()
     public String delete(@RequestBody List<Integer> id){
@@ -44,16 +41,13 @@ public class CategoryController {
         return "Categorie supprimer avec succes";
     }
     @PutMapping("/{id}")
-    public  Categories update(@PathVariable int id, @RequestBody Categories categories){
+    public  CategoryDTOresponse update(@PathVariable int id, @RequestBody CategoryDTOrequest categories) {
         Categories existingCategorie = this.categoryService.getOneById(id);
-        if (existingCategorie == null){
+        if (existingCategorie == null) {
             String message = "La catégorie n'existe pas.";
             int status = HttpStatus.NOT_FOUND.value();
             return null;
         }
-        this.categoryService.update(id, categories);
-        String message = "Categorie Modifier avec succes";
-        return this.categoryService.getOneById(id);
+        return this.categoryService.update(id, categories);
     }
-
 }

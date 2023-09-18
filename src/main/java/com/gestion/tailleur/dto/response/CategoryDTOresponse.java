@@ -2,7 +2,7 @@ package com.gestion.tailleur.dto.response;
 
 import com.gestion.tailleur.enums.TypeCategories;
 
-public record CategoryDTO(
+public record CategoryDTOresponse(
         int id,
         String libelle,
 

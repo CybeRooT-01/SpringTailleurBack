@@ -8,7 +8,7 @@ import org.springframework.data.rest.core.config.Projection;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "categories", path = "categorie", excerptProjection = CategorieProjection.class)
+//@RepositoryRestResource(collectionResourceRel = "categories", path = "categorie", excerptProjection = CategorieProjection.class)
 public interface CategoryRepository extends JpaRepository<Categories, Integer> {
     List<Categories>findByLibelle(String libelle);
 

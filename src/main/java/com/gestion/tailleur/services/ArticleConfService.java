@@ -2,80 +2,91 @@ package com.gestion.tailleur.services;
 
 import com.gestion.tailleur.Models.ArticleConf;
 import com.gestion.tailleur.Models.ArticleFournisseur;
-import com.gestion.tailleur.Models.Categories;
 import com.gestion.tailleur.Models.Fournisseur;
+import com.gestion.tailleur.dto.requests.ArticleConfDTOrequest;
+import com.gestion.tailleur.dto.response.ArticleConfDTOresponse;
+import com.gestion.tailleur.mapper.ArticleConfDTOmapper;
 import com.gestion.tailleur.repositories.ArticleConfRepository;
 import com.gestion.tailleur.repositories.ArticleFournisseursRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
 public class ArticleConfService {
     private final ArticleConfRepository articleConfRepository;
     private final ArticleFournisseursRepository articleFournisseursRepository;
+    private final ArticleConfDTOmapper articleConfDTOmapper;
 
-    public void creer(ArticleConf articleConf) {
-        String libelle = articleConf.getLibelle();
-        int prix = articleConf.getPrix();
-        int stock = articleConf.getStock();
-        String image = articleConf.getImage();
-        String reference = articleConf.getReference();
-        int id_categorie = articleConf.getCategorie().getId();
-        ArticleConf nouvelArticle  = new ArticleConf();
-        Categories categorie = new Categories();
-        nouvelArticle.setLibelle(libelle);
-        nouvelArticle.setPrix(prix);
-        nouvelArticle.setStock(stock);
-        nouvelArticle.setImage(image);
-        nouvelArticle.setReference(reference);
-        categorie.setId(id_categorie);
-        nouvelArticle.setCategorie(categorie);
-        this.articleConfRepository.save(nouvelArticle);
-        for (Fournisseur fournisseur : articleConf.getFournisseurs()) {
+    public ArticleConfDTOresponse creer(ArticleConfDTOrequest articleConf) {
+
+
+        ArticleConf articleConf1 = ArticleConf.builder()
+                .libelle(articleConf.libelle())
+                .prix(articleConf.prix())
+                .stock(articleConf.stock())
+                .image(articleConf.image())
+                .reference(articleConf.reference())
+                .categorie(articleConf.categories())
+//                .fournisseurs(articleConf.fournisseurs())
+                .build();
+
+        articleConf1.setCategorie(articleConf.categories());
+        this.articleConfRepository.save(articleConf1);
+        for (Fournisseur fournisseur : articleConf.fournisseurs()) {
             ArticleFournisseur articleFournisseur = new ArticleFournisseur();
-            articleFournisseur.setArticleConf(nouvelArticle);
+            articleFournisseur.setArticleConf(articleConf1);
             articleFournisseur.setFournisseur(fournisseur);
             this.articleFournisseursRepository.save(articleFournisseur);
         }
+        return articleConfDTOmapper.apply(articleConf1);
     }
-    public List<ArticleConf> getAll() {
-        return this.articleConfRepository.findAll();
-    }
-
-    public void modifier(int id, ArticleConf articleConf) {
-        ArticleConf articleConfAModifier = this.articleConfRepository.findById(id).get();
-        articleConfAModifier.setLibelle(articleConf.getLibelle());
-        articleConfAModifier.setPrix(articleConf.getPrix());
-        articleConfAModifier.setStock(articleConf.getStock());
-        articleConfAModifier.setImage(articleConf.getImage());
-        articleConfAModifier.setReference(articleConf.getReference());
-        articleConfAModifier.setCategorie(articleConf.getCategorie());
-        this.articleConfRepository.save(articleConfAModifier);
-        List<ArticleFournisseur> articleFournisseurs = this.articleFournisseursRepository.findAllByArticleConf(articleConfAModifier);
-        for (ArticleFournisseur articleFournisseur : articleFournisseurs) {
-            this.articleFournisseursRepository.delete(articleFournisseur);
-        }
-        for (Fournisseur fournisseur : articleConf.getFournisseurs()) {
-            ArticleFournisseur articleFournisseur = new ArticleFournisseur();
-            articleFournisseur.setArticleConf(articleConfAModifier);
-            articleFournisseur.setFournisseur(fournisseur);
-            this.articleFournisseursRepository.save(articleFournisseur);
-        }
-
-
+    public Stream<ArticleConfDTOresponse> getAll() {
+        return this.articleConfRepository.findAll()
+                .stream()
+                .map(articleConfDTOmapper);
     }
 
-    public ArticleConf getOneById(int id) {
-        return this.articleConfRepository.findById(id).orElse(null);
-    }
-
-    public void delete(int id) {
-        ArticleConf articleConf = this.articleConfRepository.findById(id).get();
-        List<ArticleFournisseur> articleFournisseurs = this.articleFournisseursRepository.findAllByArticleConf(articleConf);
+    public ArticleConfDTOresponse modifier(int id, ArticleConfDTOrequest articleConf) {
+        ArticleConf articleConf1 = this.articleConfRepository.findById(id).get();
+        articleConf1.setLibelle(articleConf.libelle());
+        articleConf1.setPrix(articleConf.prix());
+        articleConf1.setStock(articleConf.stock());
+        articleConf1.setImage(articleConf.image());
+        articleConf1.setReference(articleConf.reference());
+        articleConf1.setCategorie(articleConf.categories());
+        this.articleConfRepository.save(articleConf1);
+        int articleConfId = articleConf1.getId();
+        List<ArticleFournisseur> articleFournisseurs = this.articleFournisseursRepository.findAll();
         this.articleFournisseursRepository.deleteAll(articleFournisseurs);
-        this.articleConfRepository.deleteById(id);
+        for (Fournisseur fournisseur : articleConf.fournisseurs()) {
+            ArticleFournisseur articleFournisseur = new ArticleFournisseur();
+            articleFournisseur.setArticleConf(articleConf1);
+            articleFournisseur.setFournisseur(fournisseur);
+            this.articleFournisseursRepository.save(articleFournisseur);
+        }
+
+        return this.articleConfDTOmapper.apply(articleConf1);
+    }
+
+    public ArticleConfDTOresponse getOneById(int id) {
+
+        return this.articleConfRepository.findById(id)
+                .map(articleConfDTOmapper)
+                .orElse(null);
+    }
+
+
+    public void delete(Integer id) {
+        ArticleConf articleConf = this.articleConfRepository.findById(id).get();
+//        System.out.println("Type de l'ID : " + ((Object) id).getClass().getName());
+        this.articleConfRepository.delete(articleConf);
     }
 }

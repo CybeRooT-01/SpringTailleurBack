@@ -1,66 +1,69 @@
 package com.gestion.tailleur.controllers;
 
 import com.gestion.tailleur.Models.ArticleConf;
-import com.gestion.tailleur.response.ArticleConfResponse;
+import com.gestion.tailleur.dto.requests.ArticleConfDTOrequest;
+import com.gestion.tailleur.dto.response.ArticleConfDTOresponse;
+
+import com.gestion.tailleur.repositories.ArticleConfRepository;
 import com.gestion.tailleur.services.ArticleConfService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/articleConf")
 public class ArticleConfController {
     private final ArticleConfService articleConfService;
-
+    private final ArticleConfRepository articleConfRepository;
     @GetMapping()
-    public List<ArticleConf> listerArticles() {
-        List<ArticleConf> articles = this.articleConfService.getAll();
-        return articles;
+    public Stream<ArticleConfDTOresponse> listerArticles() {
+        return this.articleConfService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleConfDTOresponse> getOneById(@PathVariable int id) {
+        ArticleConfDTOresponse articleConf = this.articleConfService.getOneById(id);
+        if (articleConf == null) {
+            int status = 404;
+            return ResponseEntity.status(status).body(null);
+        }
+        int status = 200;
+        return ResponseEntity.status(status).body(articleConf);
     }
 
 
     @PostMapping()
-    public ResponseEntity<ArticleConfResponse> creerArticleVente(@RequestBody ArticleConf articleConf) {
-        this.articleConfService.creer(articleConf);
-        String message = "L'article a été créé avec succès.";
-        int status = 201;
-        ArticleConfResponse response = new ArticleConfResponse(message, status);
-        return ResponseEntity.status(status).body(response);
+    public ResponseEntity<ArticleConfDTOresponse> creerArticleVente(@RequestBody ArticleConfDTOrequest articleConf) {
+       ArticleConfDTOresponse insered = this.articleConfService.creer(articleConf);
+        return ResponseEntity.ok().body(insered);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleConfResponse> updateArticleVente(@PathVariable int id, @RequestBody ArticleConf articleConf) {
-        ArticleConf articleAmodifier = this.articleConfService.getOneById(id);
+    public ResponseEntity<ArticleConfDTOresponse> updateArticleVente(@PathVariable int id, @RequestBody ArticleConfDTOrequest articleConf) {
+        ArticleConfDTOresponse articleAmodifier = this.articleConfService.getOneById(id);
         if (articleAmodifier == null) {
-            String message = "L'article n'existe pas.";
             int status = 404;
-            ArticleConfResponse response = new ArticleConfResponse(message, status);
-            return ResponseEntity.status(status).body(response);
+            return ResponseEntity.status(status).body(null);
         }
-        this.articleConfService.modifier(id, articleConf);
-        String message = "L'article a été modifié avec succès.";
+        ArticleConfDTOresponse response = this.articleConfService.modifier(id, articleConf);
         int status = 200;
-        ArticleConfResponse response = new ArticleConfResponse(message, status);
-        return ResponseEntity.status(status).body(response);
-    }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ArticleConfResponse> deleteArticleVente(@PathVariable int id) {
-        ArticleConf articleAmodifier = this.articleConfService.getOneById(id);
-        if (articleAmodifier == null) {
-            String message = "L'article n'existe pas.";
-            int status = 404;
-            ArticleConfResponse response = new ArticleConfResponse(message, status);
-            return ResponseEntity.status(status).body(response);
-        }
-        this.articleConfService.delete(id);
-        String message = "L'article a été supprimé avec succès.";
-        int status = 200;
-        ArticleConfResponse response = new ArticleConfResponse(message, status);
         return ResponseEntity.status(status).body(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteArticleVente(@PathVariable Integer id) {
+        ArticleConfDTOresponse articleAmodifier = this.articleConfService.getOneById(id);
+        if (articleAmodifier == null) {
+            int status = 404;
+            return ResponseEntity.status(status).body(null);
+        }
+        this.articleConfService.delete(id);
+        int status = 200;
+        return ResponseEntity.status(status).body("Article supprimer avec succes");
+    }
 
 }
