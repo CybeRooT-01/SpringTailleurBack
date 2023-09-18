@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleConfRepository extends JpaRepository<ArticleConf, Integer> {
 
-
+ArticleConf findById(int id);
 
 }

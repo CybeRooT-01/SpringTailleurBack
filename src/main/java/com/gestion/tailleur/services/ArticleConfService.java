@@ -8,14 +8,12 @@ import com.gestion.tailleur.dto.response.ArticleConfDTOresponse;
 import com.gestion.tailleur.mapper.ArticleConfDTOmapper;
 import com.gestion.tailleur.repositories.ArticleConfRepository;
 import com.gestion.tailleur.repositories.ArticleFournisseursRepository;
-import jakarta.transaction.Transactional;
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -55,7 +53,7 @@ public class ArticleConfService {
     }
 
     public ArticleConfDTOresponse modifier(int id, ArticleConfDTOrequest articleConf) {
-        ArticleConf articleConf1 = this.articleConfRepository.findById(id).get();
+        ArticleConf articleConf1 = this.articleConfRepository.findById(id);
         articleConf1.setLibelle(articleConf.libelle());
         articleConf1.setPrix(articleConf.prix());
         articleConf1.setStock(articleConf.stock());
@@ -77,10 +75,8 @@ public class ArticleConfService {
     }
 
     public ArticleConfDTOresponse getOneById(int id) {
-
-        return this.articleConfRepository.findById(id)
-                .map(articleConfDTOmapper)
-                .orElse(null);
+        ArticleConf article = this.articleConfRepository.findById(id);
+        return this.articleConfDTOmapper.apply(article);
     }
 
 

@@ -8,6 +8,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -52,6 +54,8 @@ public class ArticleConf {
     @JsonProperty("fournisseurs")
     private Set<Fournisseur> fournisseurs;
 
-
+    @ManyToMany(mappedBy = "articleConfs", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Collection<ArticleVente> articleVentes = new ArrayList<>();
 
 }
