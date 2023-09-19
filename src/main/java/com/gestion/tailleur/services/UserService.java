@@ -3,6 +3,7 @@ package com.gestion.tailleur.services;
 import com.gestion.tailleur.Models.Role;
 import com.gestion.tailleur.Models.User;
 import com.gestion.tailleur.Models.Validation;
+import com.gestion.tailleur.dto.requests.UserDTOrequest;
 import com.gestion.tailleur.enums.TypeRoles;
 import com.gestion.tailleur.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.Utilities;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
@@ -24,18 +24,24 @@ public class UserService implements UserDetailsService {
     private  UserRepository userRepository;
     private  BCryptPasswordEncoder passwordEncoder;
     private  ValidationService validationService;
-    public void inscription(User user){
-        if (user.getEmail().indexOf('@') == -1){
+    public void inscription(UserDTOrequest userDTOrequest){
+        User user = new User();
+        user.setEmail(userDTOrequest.email());
+        user.setNom(userDTOrequest.nom());
+        if (userDTOrequest.email().indexOf('@') == -1){
             throw  new RuntimeException("Votre email est incorrecte");
         }
-        if (user.getEmail().indexOf('.') == -1){
+        if (userDTOrequest.email().indexOf('.') == -1){
             throw  new RuntimeException("Votre email est incorrecte");
         }
-        Optional<User> userExist = this.userRepository.findByEmail(user.getEmail());
+        String userEmail = userDTOrequest.email();
+        Optional<User> userExist = this.userRepository.findByEmail(userEmail);
+        System.out.println(userExist);
+        System.out.println(userEmail);
         if (userExist.isPresent()){
             throw new RuntimeException("Votre Email existe Deja");
         }
-        String mdpChiffrer = this.passwordEncoder.encode(user.getPassword());
+        String mdpChiffrer = this.passwordEncoder.encode(userDTOrequest.password());
         user.setPassword(mdpChiffrer);
         Role role = new Role();
         role.setLibelle(TypeRoles.UTILISATEUR);

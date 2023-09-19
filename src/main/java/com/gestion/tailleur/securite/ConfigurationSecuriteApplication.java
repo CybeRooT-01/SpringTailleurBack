@@ -43,7 +43,6 @@ public class ConfigurationSecuriteApplication{
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
 
 //    @Bean

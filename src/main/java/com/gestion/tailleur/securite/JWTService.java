@@ -11,9 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -21,8 +19,7 @@ import java.util.function.Function;
 public class JWTService {
     private final String ENCRYPTION_KEY = "86970548be81bf98a8b5df27c8ce89635955ec04b6e2f103761ca3b0683f6a2b";
     private UserService userService;
-
-
+    private final Set<String> revokedTokens = new HashSet<>();
 
     public Map<String, String> generate(String username){
         User user = this.userService.loadUserByUsername(username);
@@ -53,7 +50,15 @@ public class JWTService {
         byte[] decode = Decoders.BASE64.decode(ENCRYPTION_KEY);
         return Keys.hmacShaKeyFor(decode);
     }
-
+    public Boolean isTokenRevoked(String token) {
+        return revokedTokens.contains(token);
+    }
+    public Boolean validateToken(String token) {
+        if (isTokenRevoked(token)) {
+            return false;
+        }
+        return true;
+    }
     public String ExtractUser(String token) {
         return this.getClaim(token, Claims::getSubject);
     }
@@ -63,9 +68,7 @@ public class JWTService {
         return expirationDate.before(new Date());
     }
 
-//    private Date getExpirationDateFromToken(String token) {
-//        return this.getClaim(token, Claims::getExpiration);
-//    }
+
     private<T> T getClaim(String token, Function<Claims, T> function){
         Claims claims = getAllClaims(token);
         return function.apply(claims);
@@ -78,4 +81,9 @@ public class JWTService {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public void invalidate(String token) {
+        revokedTokens.add(token);
+    }
+
 }

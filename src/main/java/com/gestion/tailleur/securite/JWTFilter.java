@@ -33,6 +33,10 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         if (!isTokenExpired && userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            boolean isTokenValid = this.jwtService.validateToken(token);
+            if (!isTokenValid){
+                throw new RuntimeException("Votre token est invalide");
+            }
             UserDetails userDetails = this.userService.loadUserByUsername(userName);
             UsernamePasswordAuthenticationToken AuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(AuthenticationToken);
