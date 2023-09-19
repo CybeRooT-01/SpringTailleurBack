@@ -6,6 +6,10 @@ import com.gestion.tailleur.Models.Validation;
 import com.gestion.tailleur.enums.TypeRoles;
 import com.gestion.tailleur.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +17,13 @@ import javax.swing.text.Utilities;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
-
+//@NoArgsConstructor
 @Service
 @AllArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final ValidationService validationService;
+public class UserService implements UserDetailsService {
+    private  UserRepository userRepository;
+    private  BCryptPasswordEncoder passwordEncoder;
+    private  ValidationService validationService;
     public void inscription(User user){
         if (user.getEmail().indexOf('@') == -1){
             throw  new RuntimeException("Votre email est incorrecte");
@@ -48,5 +52,10 @@ public class UserService {
          User userActif = this.userRepository.findById(validation.getUser().getId()).orElseThrow(()->new RuntimeException("Utiliseur introuvable"));
         userActif.setActif(true);
         this.userRepository.save(userActif);
+    }
+
+    @Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("Aucun utilisateur trouver"));
     }
 }
