@@ -3,6 +3,7 @@ package com.gestion.tailleur.controllers;
 import com.gestion.tailleur.Models.User;
 import com.gestion.tailleur.dto.requests.AuthentificationDTO;
 import com.gestion.tailleur.dto.requests.UserDTOrequest;
+import com.gestion.tailleur.dto.response.AuthResponse;
 import com.gestion.tailleur.securite.JWTService;
 import com.gestion.tailleur.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,21 +30,18 @@ public class UserController {
     private JWTService jwtService;
     @PostMapping(path = "inscription")
     public void inscription(@RequestBody UserDTOrequest user){
-
         this.userService.inscription(user);
-//        log.info("inscription");
     }
     @PostMapping(path = "activation")
     public void activation(@RequestBody Map<String, String> activation){
         this.userService.activation(activation);
     }
     @PostMapping(path = "connexion")
-    public Map<String, String>connexion(@RequestBody AuthentificationDTO authentificationDTO){
+    public AuthResponse connexion(@RequestBody AuthentificationDTO authentificationDTO){
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password()));
         if (authenticate.isAuthenticated()){
            return  this.jwtService.generate(authentificationDTO.username());
         }
-//        log.info("resultat {}", authenticate.isAuthenticated());
         return null;
     }
 

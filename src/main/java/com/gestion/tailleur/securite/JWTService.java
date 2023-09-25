@@ -1,6 +1,8 @@
 package com.gestion.tailleur.securite;
 
 import com.gestion.tailleur.Models.User;
+import com.gestion.tailleur.dto.response.AuthResponse;
+import com.gestion.tailleur.repositories.UserRepository;
 import com.gestion.tailleur.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,11 +21,18 @@ import java.util.function.Function;
 public class JWTService {
     private final String ENCRYPTION_KEY = "86970548be81bf98a8b5df27c8ce89635955ec04b6e2f103761ca3b0683f6a2b";
     private UserService userService;
+    private final UserRepository userRepository;
     private final Set<String> revokedTokens = new HashSet<>();
 
-    public Map<String, String> generate(String username){
+//    public Map<String, String> generate(String username){
+//        User user = this.userService.loadUserByUsername(username);
+//        User user1 = this.userRepository.findByEmail(username).orElseThrow(()->new RuntimeException("Utilisateur introuvable"));
+//        return this.generateJWT(user);
+//    }
+    public AuthResponse generate(String username){
         User user = this.userService.loadUserByUsername(username);
-        return this.generateJWT(user);
+        User user1 = this.userRepository.findByEmail(username).orElseThrow(()->new RuntimeException("Utilisateur introuvable"));
+        return new AuthResponse(this.generateJWT(user),user1);
     }
 
     private Map<String, String> generateJWT(User user) {
@@ -81,7 +90,6 @@ public class JWTService {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
     public void invalidate(String token) {
         revokedTokens.add(token);
     }
