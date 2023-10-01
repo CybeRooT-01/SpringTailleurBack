@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ArticleFournisseursRepository extends JpaRepository<ArticleFournisseur, Integer> {
     List<ArticleFournisseur> findAllByArticleConf(ArticleConf articleConfAModifier);
+
+    List<ArticleFournisseur> findByArticleConf(ArticleConf articleConf1);
 }

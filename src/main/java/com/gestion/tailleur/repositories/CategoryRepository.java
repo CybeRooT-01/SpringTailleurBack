@@ -1,16 +1,20 @@
 package com.gestion.tailleur.repositories;
 
 import com.gestion.tailleur.Models.Categories;
+import com.gestion.tailleur.enums.TypeCategories;
 import com.gestion.tailleur.projections.CategorieProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.config.Projection;
 
+import java.util.Arrays;
 import java.util.List;
 
 //@RepositoryRestResource(collectionResourceRel = "categories", path = "categorie", excerptProjection = CategorieProjection.class)
 public interface CategoryRepository extends JpaRepository<Categories, Integer> {
     List<Categories>findByLibelle(String libelle);
+
+    List<Categories>findByTypeCategories(TypeCategories typeCategories);
 
     //RepositoryRestRessourse = genere le controller et le crud (pour formater les donnés on tuilise les projection)
 

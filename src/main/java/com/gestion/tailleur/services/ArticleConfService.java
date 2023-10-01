@@ -52,27 +52,7 @@ public class ArticleConfService {
                 .map(articleConfDTOmapper);
     }
 
-    public ArticleConfDTOresponse modifier(int id, ArticleConfDTOrequest articleConf) {
-        ArticleConf articleConf1 = this.articleConfRepository.findById(id);
-        articleConf1.setLibelle(articleConf.libelle());
-        articleConf1.setPrix(articleConf.prix());
-        articleConf1.setStock(articleConf.stock());
-        articleConf1.setImage(articleConf.image());
-        articleConf1.setReference(articleConf.reference());
-        articleConf1.setCategorie(articleConf.categories());
-        this.articleConfRepository.save(articleConf1);
-        int articleConfId = articleConf1.getId();
-        List<ArticleFournisseur> articleFournisseurs = this.articleFournisseursRepository.findAll();
-        this.articleFournisseursRepository.deleteAll(articleFournisseurs);
-        for (Fournisseur fournisseur : articleConf.fournisseurs()) {
-            ArticleFournisseur articleFournisseur = new ArticleFournisseur();
-            articleFournisseur.setArticleConf(articleConf1);
-            articleFournisseur.setFournisseur(fournisseur);
-            this.articleFournisseursRepository.save(articleFournisseur);
-        }
 
-        return this.articleConfDTOmapper.apply(articleConf1);
-    }
 
     public ArticleConfDTOresponse getOneById(int id) {
         ArticleConf article = this.articleConfRepository.findById(id);
@@ -84,5 +64,27 @@ public class ArticleConfService {
         ArticleConf articleConf = this.articleConfRepository.findById(id).get();
 //        System.out.println("Type de l'ID : " + ((Object) id).getClass().getName());
         this.articleConfRepository.delete(articleConf);
+    }
+    public ArticleConfDTOresponse modifier(int id, ArticleConfDTOrequest articleConf) {
+        ArticleConf articleConf1 = this.articleConfRepository.findById(id);
+        articleConf1.setLibelle(articleConf.libelle());
+        articleConf1.setPrix(articleConf.prix());
+        articleConf1.setStock(articleConf.stock());
+        articleConf1.setImage(articleConf.image());
+        articleConf1.setReference(articleConf.reference());
+        articleConf1.setCategorie(articleConf.categories());
+        this.articleConfRepository.save(articleConf1);
+        int articleConfId = articleConf1.getId();
+        List<ArticleFournisseur> articleFournisseurs = this.articleFournisseursRepository.findByArticleConf(articleConf1);
+        for (ArticleFournisseur articleFournisseur : articleFournisseurs) {
+            this.articleFournisseursRepository.delete(articleFournisseur);
+        }
+        for (Fournisseur fournisseur : articleConf.fournisseurs()) {
+            ArticleFournisseur articleFournisseur = new ArticleFournisseur();
+            articleFournisseur.setArticleConf(articleConf1);
+            articleFournisseur.setFournisseur(fournisseur);
+            this.articleFournisseursRepository.save(articleFournisseur);
+        }
+        return this.articleConfDTOmapper.apply(articleConf1);
     }
 }

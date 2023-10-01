@@ -2,10 +2,13 @@ package com.gestion.tailleur.services;
 
 import com.gestion.tailleur.Models.Categories;
 import com.gestion.tailleur.dto.requests.CategoryDTOrequest;
+import com.gestion.tailleur.dto.requests.ListIdsDTO;
 import com.gestion.tailleur.dto.response.CategoryDTOresponse;
+import com.gestion.tailleur.enums.TypeCategories;
 import com.gestion.tailleur.mapper.CategoryDTOmapper;
 import com.gestion.tailleur.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,9 +39,10 @@ public class CategoryService {
     }
 
 
-    public void delete(List<Integer> id) {
-        for (Integer integer : id) {
-            this.categoryRepository.deleteById(integer);
+    public void delete(ListIdsDTO listIdsDTO) {
+        List<Integer> ids = listIdsDTO.id();
+        for (Integer id : ids) {
+            this.categoryRepository.deleteById(id);
         }
     }
 
@@ -48,5 +52,14 @@ public class CategoryService {
         existingCategorie.setTypeCategories(categories.typeCategories());
         this.categoryRepository.save(existingCategorie);
         return this.categoryDTOmapper.apply(existingCategorie);
+    }
+
+    public Stream<CategoryDTOresponse> getAllCategorieConfection() {
+        return this.categoryRepository.findByTypeCategories(TypeCategories.CONFECTION)
+                .stream().map(categoryDTOmapper);
+    }
+    public Stream<CategoryDTOresponse> getAllCategorieVente() {
+        return this.categoryRepository.findByTypeCategories(TypeCategories.VENTE)
+                .stream().map(categoryDTOmapper);
     }
 }

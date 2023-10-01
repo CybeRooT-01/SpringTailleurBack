@@ -37,7 +37,7 @@ public class JWTService {
 
     private Map<String, String> generateJWT(User user) {
         long currentTimeMillis = System.currentTimeMillis();
-        long ExpirationTimeMillis = currentTimeMillis + 30 * 60 * 1000;
+        long ExpirationTimeMillis = currentTimeMillis + 300 * 60 * 1000;
 
         final Map<String, Object> claims = Map.of(
                 "nom", user.getNom(),
